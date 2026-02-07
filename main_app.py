@@ -8,7 +8,7 @@ import torch.nn as nn
 from collections import deque
 from scipy import ndimage
 
-# --- CONFIGURATION ---
+# CONFIGURATION
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 PROB_THRESHOLD = 0.85 
 
@@ -19,7 +19,7 @@ RED = (0, 0, 255)
 GREEN = (0, 255, 0)
 BLUE = (255, 0, 0)
 
-# --- MODEL ARCHITECTURE (Must match train.py) ---
+# MODEL ARCHITECTURE
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
@@ -183,7 +183,7 @@ def detect_and_predict_digits(img):
     
     return results
 
-# --- MAIN LOOP ---
+# MAIN LOOP
 cap = cv2.VideoCapture(0)
 
 print("Air MNIST Started. Index Finger to Draw. Two Fingers Up for Space. Thumb+Pinky to Clear.")

@@ -6,12 +6,12 @@ import torch.nn as nn
 from collections import deque
 import time
 
-# --- CONFIGURATION ---
+# CONFIGURATION
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 PROB_THRESHOLD = 0.50 
 SMOOTHING_FACTOR = 0.2
 MIN_CONTOUR_AREA = 400
-LOCK_DELAY = 1.0  # Seconds to wait before locking the number
+LOCK_DELAY = 1.0 
 
 # Colors (BGR)
 WHITE = (255, 255, 255)
@@ -23,7 +23,7 @@ YELLOW = (0, 255, 255) # Color for LOCKED state
 GRAY = (50, 50, 50)
 UI_COLOR = (220, 220, 220)
 
-# --- 1. MODEL ARCHITECTURE ---
+# MODEL ARCHITECTURE
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
@@ -49,7 +49,7 @@ class Net(nn.Module):
         output = torch.log_softmax(x, dim=1)
         return output
 
-# --- 2. HELPER CLASSES ---
+# HELPER CLASSES
 
 class Stabilizer:
     def __init__(self, alpha=0.2):
@@ -103,7 +103,7 @@ class VirtualButton:
             self.hover_counter = 0
         return False
 
-# --- 3. CORE LOGIC ---
+# CORE LOGIC
 
 def detect_and_predict_digits(img, model):
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -183,7 +183,7 @@ def detect_and_predict_digits(img, model):
     results.sort(key=lambda k: k['bbox'][0])
     return results
 
-# --- 4. MAIN LOOP ---
+# MAIN LOOP
 
 def main():
     model = Net().to(DEVICE)
@@ -213,7 +213,7 @@ def main():
     feedback_text = ""
     feedback_timer = 0
     
-    # --- LOCKING MECHANISM VARIABLES ---
+    # LOCKING MECHANISM VARIABLES
     last_draw_time = time.time()
     prediction_locked = False
     locked_digit_str = ""
@@ -239,7 +239,7 @@ def main():
             landmarks = result.multi_hand_landmarks[0].landmark
             idx_x, idx_y = int(landmarks[8].x * w), int(landmarks[8].y * h)
             
-            # --- DRAWING GESTURE ---
+            # DRAWING GESTURE
             if landmarks[8].y < landmarks[6].y and landmarks[12].y > landmarks[10].y:
                 is_drawing_now = True
                 last_draw_time = time.time() # Reset timer
@@ -253,7 +253,7 @@ def main():
                 bpoints.append(deque(maxlen=512))
                 blue_index += 1
 
-            # --- BUTTONS ---
+            # BUTTONS
             # Clear
             if btn_clear.is_clicked((idx_x, idx_y)):
                 paintWindow[:] = 0
@@ -273,7 +273,7 @@ def main():
                 locked_digit_str = ""
                 prediction_locked = False
 
-            # ADD (Only adds if LOCKED)
+            # ADD
             if btn_add.is_clicked((idx_x, idx_y)):
                 if locked_digit_str != "":
                     try:
@@ -292,7 +292,7 @@ def main():
 
             mp_draw.draw_landmarks(frame, result.multi_hand_landmarks[0], mp_hands.HAND_CONNECTIONS)
 
-        # --- PREDICTION LOCKING LOGIC ---
+        # PREDICTION LOCKING LOGIC
         
         # 1. If not drawing and time passed > delay, LOCK prediction
         if not is_drawing_now and (time.time() - last_draw_time > LOCK_DELAY):
@@ -307,7 +307,7 @@ def main():
                 locked_digit_str = ""
                 locked_results = []
         
-        # --- DRAW UI ---
+        # DRAW UI
         
         # Draw Ink
         points = [bpoints]

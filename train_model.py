@@ -5,12 +5,12 @@ from torchvision import datasets, transforms
 from torch.utils.data import DataLoader
 import matplotlib.pyplot as plt
 
-# --- CONFIGURATION ---
+# CONFIGURATION
 BATCH_SIZE = 64
 EPOCHS = 5
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-# --- DATASET ---
+# DATASET
 transform = transforms.Compose([
     transforms.ToTensor(),
     transforms.Normalize((0.1307,), (0.3081,)) # MNIST Mean & Std
@@ -22,7 +22,7 @@ train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
 test_dataset = datasets.MNIST('./data', train=False, download=True, transform=transform)
 test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=False)
 
-# --- MODEL ---
+# MODEL
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
@@ -48,7 +48,7 @@ class Net(nn.Module):
         output = torch.log_softmax(x, dim=1)
         return output
 
-# --- TRAINING ---
+# TRAINING
 model = Net().to(DEVICE)
 optimizer = optim.Adadelta(model.parameters(), lr=1.0)
 
@@ -94,11 +94,11 @@ for epoch in range(1, EPOCHS + 1):
     
     print(f"Epoch {epoch} - Loss: {avg_loss:.4f}, Test Accuracy: {test_accuracy:.2f}%")
 
-# --- SAVE ---
+# SAVE
 torch.save(model.state_dict(), "mnist_pytorch.pth")
 print("Model saved as 'mnist_pytorch.pth'")
 
-# --- PLOT GRAPHS ---
+# PLOT GRAPHS
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 4))
 
 # Loss graph
