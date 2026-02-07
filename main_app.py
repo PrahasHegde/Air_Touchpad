@@ -1,3 +1,5 @@
+# Air MNIST: A Hand Gesture-Based Digit Recognition System Using PyTorch and MediaPipe
+
 import cv2
 import numpy as np
 import mediapipe as mp
